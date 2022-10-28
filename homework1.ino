@@ -12,6 +12,8 @@ int potBlueValue = 0;
 
 const int maxAnalogValuePot = 1023;  //maximum value for pots
 const int maxAnalogValueLed = 255;   //maximum value for leds
+const int minAnalogValuePot = 0;    //minimum value for pots
+const int minAnalogValueLed = 0;    //minimum value for leds
 
 void setup() {
 
@@ -31,7 +33,7 @@ void loop() {
   potGreenValue = analogRead(potPinGreen);
   potBlueValue = analogRead(potPinBlue);
 
-  analogWrite(ledPinRed, map(potRedValue, 0, maxAnalogValuePot, 0, maxAnalogValueLed));
-  analogWrite(ledPinGreen, map(potGreenValue, 0, maxAnalogValuePot, 0, maxAnalogValueLed));
-  analogWrite(ledPinBlue, map(potBlueValue, 0, maxAnalogValuePot, 0, maxAnalogValueLed));
+  analogWrite(ledPinRed, map(potRedValue, minAnalogValuePot, maxAnalogValuePot, minAnalogValueLed, maxAnalogValueLed));
+  analogWrite(ledPinGreen, map(potGreenValue, minAnalogValuePot, maxAnalogValuePot, minAnalogValueLed, maxAnalogValueLed));
+  analogWrite(ledPinBlue, map(potBlueValue, minAnalogValuePot, maxAnalogValuePot, minAnalogValueLed, maxAnalogValueLed));
 }
