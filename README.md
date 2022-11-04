@@ -31,7 +31,7 @@ Duration: 3 seconds.
 and a beeping sound from the buzzer at a constant interval. Duration:
 8 seconds.
 4. State 4 (initiated after state 3 ends): red for cars, blinking green
-for people and a beeping sound from the buzzer, at a constant interval, faster than the beeping in state 3. This state should last 4
+for people and a beeping sound from the buzzer, at a constant interval, faster than the beeping in state 3. This state should last 4
 seconds.
 
   Picture link: https://postimg.cc/ctQ1Wtfq
