@@ -24,7 +24,7 @@ byte buttonPressed = 0;
 
 int segments[segSize] = { pinA, pinB, pinC, pinD, pinE, pinF, pinG, pinDP};
 int currentSeg = pinDP;
-byte vectorSeg[segSize - 1] = {0,0,0,0,0,0,0};
+byte vectorSeg[segSize] = {0,0,0,0,0,0,0,0};
 
 unsigned int blinkDelay =200;
 unsigned int debounceDelay =100;
@@ -108,7 +108,7 @@ void state2()
   if((xValue<400 || xValue>600)&&joyMovedState2==false)
   {
     joyMovedState2=true;
-    for(int i = 0; i < segSize - 1; i++)
+    for(int i = 0; i < segSize ; i++)
       if(segments[i] == currentSeg)
       {
         if(vectorSeg[i] == 0)
@@ -130,14 +130,15 @@ void state2()
 }
 void digitalW()
 {
-  for(int i = 0; i < segSize - 1; i++)
+  for(int i = 0; i < segSize ; i++)
       digitalWrite(segments[i], vectorSeg[i]);
 }
 
 void resetLeds()
 {
-  for(int i = 0; i < segSize - 1; i++)
+  for(int i = 0; i < segSize ; i++)
     vectorSeg[i] = 0;
+  currentSeg=pinDP;
 }
 void check()
 {
