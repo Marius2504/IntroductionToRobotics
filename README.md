@@ -37,7 +37,7 @@ seconds.
   Picture link: https://postimg.cc/ctQ1Wtfq
   Video Link: https://youtu.be/QORRnv0wpP8
 
-## Homework 2
+## Homework 3
 #### Components: 
 1 7-segment display, 1 joystick, resistors and wires (perlogic)
 #### General description: You will use the joystick to control the position of
