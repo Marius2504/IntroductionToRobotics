@@ -95,7 +95,8 @@ is set to the first (rightmost) digit, in the first state.
   Video Link: https://www.youtube.com/watch?v=VAm3trxx7Hs
   
 ## Homework 5
-#### Components:an LCD, a joystick, a buzzer and the led matrix.
+#### Components:
+an LCD, a joystick, a buzzer and the led matrix.
 
 Menu Task: Create a menu for your game, emphasis on the game. You
 should scroll on the LCD with the joystick. Remember you have quite a
