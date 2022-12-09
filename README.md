@@ -131,19 +131,19 @@ a few moments.
       text?)
     * How to play: short and informative description
 3. While playing the game: display all relevant info
-  * Lives
-  * Level
-  * Score
-  * Time?
-  * Player name?
-  * etc
+    * Lives
+    * Level
+    * Score
+    * Time?
+    * Player name?
+    * etc
 4. Upon game ending:
-* Screen 1: a message such as ”Congratulations on reaching level/score
-X”. ”You did better than y people.”. etc. Switches to screen 2
-upon interaction (button press) or after a few moments.
-* Screen 2: display relevant game info: score, time, lives left etc.
-Must inform player if he/she beat the highscore. This
-menu should only be closed by the player, pressing a button.
+    * Screen 1: a message such as ”Congratulations on reaching level/score
+    X”. ”You did better than y people.”. etc. Switches to screen 2
+    upon interaction (button press) or after a few moments.
+    * Screen 2: display relevant game info: score, time, lives left etc.
+    Must inform player if he/she beat the highscore. This
+    menu should only be closed by the player, pressing a button.
 
 Picture link: https://postimg.cc/fV37ZpD5
 Video Link: https://www.youtube.com/watch?v=FN3APDBeb2Q
