@@ -145,7 +145,7 @@ a few moments.
     Must inform player if he/she beat the highscore. This
     menu should only be closed by the player, pressing a button.
 
-Picture link: https://postimg.cc/fV37ZpD5
-Video Link: https://www.youtube.com/watch?v=FN3APDBeb2Q
+Picture link: https://postimg.cc/fV37ZpD5 \
+Video Link: https://www.youtube.com/watch?v=FN3APDBeb2Q \
 Video Link intro message: https://www.youtube.com/watch?v=7Awa-G5oMOA
 
