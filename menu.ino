@@ -30,8 +30,8 @@ const byte sounds = 5;
 const byte startHighScore = 128;
 
 const byte dinPin =12;
-const byte clockPin =11;
-const byte loadPin =10;
+const byte clockPin =10;
+const byte loadPin =11;
 const byte rs = 13;
 const byte en = 8;
 const byte d4 = 7;
@@ -40,7 +40,8 @@ const byte d6 = 5;
 const byte d7 = 4;
 const byte buzzerPin = 3;
 
-//const int pinSW = 2; // digital pin connected to switch output
+
+const int pinSW = 2; // digital pin connected to switch output
 const int pinX = A1; // A0 - analog pin connected to X output
 const int pinY = A0;
 const int LCD_Contrast = 9;
@@ -50,13 +51,14 @@ int xValue = 0;
 int yValue = 0;
 int swValue = 0;
 int lastSwValue = 0;
+byte buttonPressed = 0;
 bool joyMoved = false;
 int buzzerTone1 =1000;
 int buzzerTone2 =700;
 int buzzerTone3 =500;
 int buzzerTone4 =300;
 
-byte buttonPressed = 0;
+//byte buttonPressed = 0;
 unsigned long lastDebounceTimeForButton = 0;
 unsigned long timeForLetter =300;
 unsigned long lastTimeForLetter = 0;
@@ -89,11 +91,15 @@ int timeForExposure = 3000; // the time in ms for message
 int timeExposed;
 bool clear=false; // if the lcd should be cleared
 int state = 0; // 0-menu, 1-startgame, 2-highScore, 3-settings, 4-about, 5-howtoplay
-String options[] = {"Start game","High score","Settings","About","How to play"};
+String options[] = {"Start game","High score","Settings","About","How to play","Reset"};
 int position = 0; // the index of options[] that will be displayed
 int state2 = 0;
 int position2 = 0;
 String options2[] = {"Enter name","Difficulty","LCD contrast","LCD brightness","Matrix brightness","Sound on/off"};
+char msg[] = "Game created by Marius Dumitrescu, University of Bucharest githubLink: https://github.com/Marius2504";
+String aboutMessage=String(msg);
+char msg1[]="No game uploaded yet";
+String howToPlayMessage = String(msg1);
 bool shown =false;//is the variable that says if the text should be displayed or not
 bool read = false;//if the data was read
 String Word1;//a word
@@ -104,14 +110,26 @@ int buzzInterval = 100;
 int numberOfChr = 0;
 char my_string[100];
 
-
+//game variables
+int xSnake=0;
+int ySnake =0;
+struct pos
+{
+  int x,y;
+};
+pos length[10];
+int score =0;
+int xApple = 4;
+int yApple = 4;
 
 void setup() {
- // String cc="High scores: marius:1000, ion:2000           \n";
-  //EEPROM.update(0,cc.length());
-  //EEPROM.put(128,"High scores: marius:1000, ion:2000           \n"); 
+  String cc="High scores: marius:1000, ion:2000           \n";
+  EEPROM.update(0,cc.length());
+  EEPROM.put(128,"High scores: marius:1000, ion:2000           \n"); 
   setLCD();//set the initial values for contrast and brightness
-  soundLevel = EEPROM.read(sounds);
+  
+  pinMode(pinSW, INPUT_PULLUP);
+
   pinMode(pinX,INPUT);
   pinMode(pinY,INPUT);
   lcd.begin(16, 2);
@@ -123,7 +141,7 @@ void setup() {
 }
 
 void loop() {
-  initializeMatrix();
+  //initializeMatrix();
   
   //analogWrite(pinContrast,0);
   //tone(buzzerPin, buzzerTone,500);
@@ -144,7 +162,9 @@ void loop() {
     case 3:settings();break;
     case 4:about();break;
     case 5:howToPlay();break;
+    case 6:reset();break;
   }
+  
 }
 void menu()
 {
@@ -159,7 +179,7 @@ void menu()
       joyMoved=true;
       shown = false;
     }
-    if(yValue > 600 && position<4){
+    if(yValue > 600 && position<5){
       if(soundLevel == true)
         tone(buzzerPin, buzzerTone1,buzzInterval);
       position++;
@@ -189,7 +209,64 @@ void menu()
 
 void startGame()
 {
+  
   xValue = analogRead(pinX);
+  yValue = analogRead(pinY);
+
+  if(shown == false){
+    lcd.clear();
+    lcd.print("Started");
+    lastShown = millis();
+    shown = true;
+  }
+  /*
+  swValue = !digitalRead(pinSW);
+
+  if(joyMoved==false) {
+    if(yValue<400 && ySnake >0){
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone1,buzzInterval);
+      ySnake--;
+      joyMoved=true;
+      shown = false;
+    }
+    if(yValue > 600 && ySnake<8){
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone1,buzzInterval);
+      ySnake++;
+      joyMoved=true;
+      shown = false;
+    }
+
+    if(xValue<400 && xSnake <8){
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone1,buzzInterval);
+      xSnake++;
+      joyMoved=true;
+      shown = false;
+    }
+    if(xValue > 600 && xSnake>0){
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone1,buzzInterval);
+      xSnake--;
+      joyMoved=true;
+      shown = false;
+    }
+
+    if(swValue != lastSwValue&&  millis() - lastDebounceTimeForButton > debounceDelay)
+    {
+      lastDebounceTimeForButton = millis();
+      state = 0;//because state = 0 is for menu
+      shown = false;
+      waitInteraction();
+    }
+
+    lc.setLed(0, xSnake, ySnake, false);
+  }
+  
+  if(joyMoved==true && yValue>400 && yValue < 600 && xValue>400 && xValue < 600)
+    joyMoved = false;
+  */
   if(xValue>600){
     if(soundLevel == true)
       tone(buzzerPin, buzzerTone3,buzzInterval);
@@ -206,7 +283,7 @@ void highscore()
   {
     numberOfChr = EEPROM.read(lengthHighScore); // number characters
     for(int i=0;i<numberOfChr-1;i++){
-      my_string[i] = EEPROM.read(startHighScore+i);
+    my_string[i] = EEPROM.read(startHighScore+i);
       //Serial.print(i);
      // Serial.print(' ');
      // Serial.println(EEPROM.read(startHighScore+i));
@@ -295,22 +372,81 @@ void settings()
 void about()
 {
   xValue = analogRead(pinX);
+  if(shown == false){
+    Serial.println(msg);
+    lcd.clear();
+    writeToRow2(msg,aboutMessage.length());
+    lastShown = millis();
+    shown = true;
+  }
+  if(shown == true && millis()-lastShown>debounceDelayShown)
+    shown = false;
+
   if(xValue>600){
     state = 0;//because state = 0 is for menu
     shown = false;
-    tone(buzzerPin, buzzerTone3,buzzInterval);
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
     waitInteraction();
   }
 }
 void howToPlay()
 {
   xValue = analogRead(pinX);
+  if(shown == false){
+    Serial.println(msg);
+    lcd.clear();
+    writeToRow2(msg1,howToPlayMessage.length());
+    lastShown = millis();
+    shown = true;
+  }
+  if(shown == true && millis()-lastShown>debounceDelayShown)
+    shown = false;
+
   if(xValue>600){
     state = 0;//because state = 0 is for menu
     shown = false;
-    tone(buzzerPin, buzzerTone3,buzzInterval);
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
     waitInteraction();
   }
+}
+void reset()
+{
+  xValue = analogRead(pinX);
+  numberOfChr = EEPROM.read(lengthHighScore);
+  if(shown == false){
+    if(numberOfChr==0)
+      {
+        lcd.clear();
+        lcd.print("Null score");
+        shown = true;
+      }
+    else{
+    lcd.clear();
+    lcd.print("Reset highscores?");
+    shown = true;}
+  }
+  if(numberOfChr!=0){
+    if(xValue<400)
+    {
+      for(int i=0;i<numberOfChr-1;i++)
+        EEPROM.update(startHighScore+i,' ');
+      EEPROM.update(lengthHighScore,0);
+      joyMoved = true;
+      shown = false;
+    }
+  }
+  if(joyMoved==true && yValue>400 && yValue < 600 && xValue>400 && xValue < 600)
+    joyMoved = false;
+
+  if(xValue>600){
+    state = 0;//because state = 0 is for menu
+    shown = false;
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
+    waitInteraction();
+  } 
 }
 void message()
 {
@@ -349,7 +485,7 @@ void writeToRow2(char cuv[],int number)
   int index =0;
   int index2 =1;
   bool finish = false;
-  for(int i = 0;i<numberOfChr;i++)
+  for(int i = 0;i<number;i++)
   {
     xValue = analogRead(pinX);
     
@@ -368,6 +504,7 @@ void writeToRow2(char cuv[],int number)
       ecran[j] = cuv[index];
       index++;
     }
+    Serial.println(ecran);
     lcd.clear();
     lcd.print(ecran);
     while(millis()-lastTimeForLetter<timeForLetter)
@@ -399,13 +536,15 @@ void EnterName()
   
   if(joyMoved==false) {
     if(yValue<400 && letterValue<(int)'z'){
-      tone(buzzerPin, buzzerTone1,buzzInterval);
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone1,buzzInterval);
       letterValue++;
       joyMoved=true;
       shown = false;
     }
     if(yValue > 600 && letterValue>(int)'a'){
-      tone(buzzerPin, buzzerTone1,buzzInterval);
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone1,buzzInterval);
       letterValue--;
       joyMoved=true;
       shown = false;
@@ -413,14 +552,16 @@ void EnterName()
   }
   if(joyMoved==false) {
     if(xValue<400 && letterPosition<6){
-      tone(buzzerPin, buzzerTone4,buzzInterval);
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone4,buzzInterval);
       letterPosition++;
       letterValue = name[letterPosition];
       joyMoved=true;
       shown = false;
     }
     if(xValue>600 && letterPosition == 0){
-      tone(buzzerPin, buzzerTone4,buzzInterval);
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone4,buzzInterval);
       state2 = 0;//because state = 0 is for menu
       joyMoved=true;
       shown = false;
@@ -431,7 +572,8 @@ void EnterName()
       letterValue = name[letterPosition];
       joyMoved=true;
       shown = false;
-      tone(buzzerPin, buzzerTone3,buzzInterval);
+      if(soundLevel == true)
+        tone(buzzerPin, buzzerTone3,buzzInterval);
     }
   }
   if(shown == false && state2 !=0)
@@ -478,10 +620,10 @@ void Difficulty()
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("    Dificulty");
-    char diff[14];
+    char diff[15];
     for(int i = 0;i<difficultyLevel;i++)
       diff[i]='X';
-    for(int i=difficultyLevel;i<15;i++)
+    for(int i=difficultyLevel;i<16;i++)
       diff[i]=' ';
     lcd.setCursor(0,1);
     lcd.print(diff);
@@ -493,7 +635,8 @@ void Difficulty()
     state2 = 0;//because state = 0 is for menu
     joyMoved=true;
     shown = false;
-    tone(buzzerPin, buzzerTone3,buzzInterval);
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
     waitInteraction();
   }
 }
@@ -529,10 +672,10 @@ void LCD_contrast()
     Serial.println(map(lcdContrastLevel, 0, 16, 0, 255));
     lcd.setCursor(0,0);
     lcd.print("   LCD Contrast");
-    char diff[14];
+    char diff[15];
     for(int i = 0;i<lcdContrastLevel;i++)
       diff[i]='X';
-    for(int i=lcdContrastLevel;i<15;i++)
+    for(int i=lcdContrastLevel;i<16;i++)
       diff[i]=' ';
     lcd.setCursor(0,1);
     lcd.print(diff);
@@ -544,7 +687,8 @@ void LCD_contrast()
     state2 = 0;//because state = 0 is for menu
     joyMoved=true;
     shown = false;
-    tone(buzzerPin, buzzerTone3,buzzInterval);
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
     waitInteraction();
   }
 }
@@ -583,10 +727,10 @@ void LCD_brightness()
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("   LCD Brightness");
-    char diff[14];
+    char diff[15];
     for(int i = 0;i<lcdBrightnessLevel;i++)
       diff[i]='X';
-    for(int i=lcdBrightnessLevel;i<15;i++)
+    for(int i=lcdBrightnessLevel;i<16;i++)
       diff[i]=' ';
     lcd.setCursor(0,1);
     lcd.print(diff);
@@ -599,7 +743,8 @@ void LCD_brightness()
     state2 = 0;//because state = 0 is for menu
     joyMoved=true;
     shown = false;
-    tone(buzzerPin, buzzerTone3,buzzInterval);
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
     waitInteraction();
   }
 }
@@ -650,7 +795,8 @@ void Matrix_brightness()
     state2 = 0;//because state = 0 is for menu
     joyMoved=true;
     shown = false;
-    tone(buzzerPin, buzzerTone3,buzzInterval);
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
     waitInteraction();
   }
 
@@ -700,6 +846,8 @@ void Sound()
     state2 = 0;//because state = 0 is for menu
     joyMoved=true;
     shown = false;
+    if(soundLevel == true)
+      tone(buzzerPin, buzzerTone3,buzzInterval);
     waitInteraction();
   }
 
@@ -722,6 +870,9 @@ void setLCD()
 {
   lcdContrastLevel = EEPROM.read(lcdContrast);
   lcdBrightnessLevel = EEPROM.read(lcdBrightness);
+  soundLevel = EEPROM.read(sounds);
+  difficultyLevel = EEPROM.read(difficulty);
+  matrixBrightnessLevel = EEPROM.read(matrixBrightness);
   Serial.println(lcdContrastLevel);
   Serial.println(lcdBrightnessLevel);
   analogWrite(LCD_Contrast,map(lcdContrastLevel, 0, 16, 0, 255));
