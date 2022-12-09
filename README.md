@@ -111,7 +111,7 @@ a few moments.
     – Update it when the game is done. Highest possible score
     should be achieved by starting at a higher level.
     – Save the top 5+ values in EEPROM with name and score.
-  (c) Settings:
+  c. Settings:
     – Enter name. The name should be shown in highscore. Maybe
     somewhere else, as well?
     – Starting level: Set the starting level value. The idea is to
@@ -126,10 +126,10 @@ a few moments.
     – Extra stuff can include items specific to the game mechanics,
     or other settings such as chosen theme song etc. Again, save
     it to eeprom.
-  (d) About: should include details about the creator(s) of the game.
+  d. About: should include details about the creator(s) of the game.
     At least game name, author and github link or user (use scrolling
     text?)
-  (e) How to play: short and informative description
+  e. How to play: short and informative description
 3. While playing the game: display all relevant info
   – Lives
   – Level
