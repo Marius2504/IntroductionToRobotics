@@ -601,7 +601,7 @@ void Difficulty()
   }
   
   if(joyMoved==false) {
-    if(yValue<400 && difficultyLevel<16){
+    if(yValue<400 && difficultyLevel<3){
       difficultyLevel++;
       joyMoved=true;
       shown = false;
@@ -620,13 +620,14 @@ void Difficulty()
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("    Dificulty");
-    char diff[15];
-    for(int i = 0;i<difficultyLevel;i++)
-      diff[i]='X';
-    for(int i=difficultyLevel;i<16;i++)
-      diff[i]=' ';
     lcd.setCursor(0,1);
-    lcd.print(diff);
+    switch(difficultyLevel)
+    {
+      case 0:lcd.print("Easy");break;
+      case 1:lcd.print("Medium");break;
+      case 2:lcd.print("Hard");break;
+      case 3:lcd.print("Impossible");break;
+    }
     shown = true;
   }
 
